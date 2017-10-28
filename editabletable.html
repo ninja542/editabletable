@@ -11,10 +11,10 @@
 					<th>x</th>
 					<th>y</th>
 				</tr>
-				<tr v-for="item in coordinates">
+				<tr v-for="(item, index) in coordinates">
 					<td v-on:click="edit=true"><div v-show="edit==false">{{item.x}}</div><input v-show="edit" v-bind:value="item.x" v-model.number="item.x" v-on:keyup.esc="edit=false" type="number"></td>
 					<td v-on:click="edit=true;"><div v-show="edit==false">{{item.y}}</div><input v-show="edit"  v-bind:value="item.y" v-model.number="item.y" v-on:keyup.esc="edit=false" type="number"></td>
-					<td class="delete" v-on:click="deleteRow(item)">
+					<td v-show="index != 0" class="delete" v-on:click="deleteRow(item)">
 						<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
 							<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
 							<path d="M0 0h24v24H0z" fill="none"></path>
@@ -32,7 +32,7 @@
 			<input type="checkbox" id="1/y"><label for="1/y">1/y</label>
 		</div>
 	</div>
-	<script src="../d3.min.js"></script>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
 	<script src="https://unpkg.com/vue"></script>
 	<script src="editabletable.js"></script>
 	</body>
