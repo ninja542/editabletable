@@ -1,6 +1,6 @@
-const margin = {top:24, right:24, bottom:24, left:24};
-var height = 500 - margin.top - margin.bottom,
-		width = 500 - margin.right - margin.left;
+const margin = {top:52, right:52, bottom:52, left:52};
+var height = 650 - margin.top - margin.bottom,
+		width = 650 - margin.right - margin.left;
 var svgSelection = d3.select("#body").append("svg").attr("id", "chart")
 		.attr("width", width + margin.right + margin.left)
 		.attr("height", height + margin.top + margin.bottom)
@@ -22,7 +22,6 @@ var app = new Vue({
 	},
 	methods: {
 		update: function(){
-			// this.edit = false;
 			// JOIN select chart and bind data to circles
 			var dataSelection = svgSelection.selectAll("circle").data(this.coordinates);
 			// UPDATE old elements
@@ -96,9 +95,6 @@ var app = new Vue({
 		svgSelection.selectAll("circle").data(this.coordinates).enter().append("circle").attr("r", 3).attr("fill", "black").attr("cx", this.xMap).attr("cy", this.yMap);
 		this.xAxis(svgSelection);
 		this.yAxis(svgSelection);
-	},
-	created: function() {
-		var xArray = this.coordinates.map(function(x){return x.x;});
 	},
 	watch: {
 		coordinates: {
