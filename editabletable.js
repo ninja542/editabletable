@@ -28,11 +28,13 @@ var app = new Vue({
 			dataSelection.attr("r", 3).attr("fill", "black").transition().duration(500).attr("cx", this.xMap).attr("cy", this.yMap);
 			// ENTER append new circles to new data
 			dataSelection.enter().append("circle").attr("r", 3).attr("fill", "black").attr("cx", this.xMap).attr("cy", this.yMap);
-			// EXIT delete removed data
-			dataSelection.exit().remove();
+			// update line
 			// update axes
 			svgSelection.select(".x").transition().duration(500).call(d3.axisBottom(this.xScale())).attr("transform", "translate(0, "+ (this.xShift) +")");
 			svgSelection.select(".y").transition().duration(500).call(d3.axisLeft(this.yScale())).attr("transform", "translate("+this.yShift+", 0)");
+			// EXIT delete removed data
+			dataSelection.exit().remove();
+			lineSelection = svgSelection.select(".line").data(this.coordinates).transition().duration(500).attr("d", this.drawLineReg());
 		},
 		addRow: function(){
 			this.coordinates.push({x: null, y: null});
@@ -42,11 +44,22 @@ var app = new Vue({
 			this.update();
 		},
 		xScale: function(){
-			// var xArray = this.coordinates.map(function(x){return x.x;});
+			var xMap;
+			if(d3.max(this.xArray) == 0 && d3.min(this.xArray) == 0){
+				this.yShift = 0;
+				return d3.scaleLinear().domain([0, 1]).range([0, width]).nice();
+			}
 			if(d3.min(this.xArray)<0){
-				var xMap = d3.scaleLinear().domain(d3.extent(this.xArray)).range([0, width]).nice();
-				this.yShift = xMap(0);
-				return xMap;
+				if(d3.max(this.xArray)<0){
+					xMap = d3.scaleLinear().domain([d3.min(this.xArray), 0]).range([0, width]).nice();
+					this.yShift = xMap(0);
+					return xMap;
+				}
+				else {
+					xMap = d3.scaleLinear().domain(d3.extent(this.xArray)).range([0, width]).nice();
+					this.yShift = xMap(0);
+					return xMap;
+				}
 			}
 			else{
 				this.yShift = 0;
@@ -65,11 +78,22 @@ var app = new Vue({
 			return scale(d.x);
 		},
 		yScale: function(){
-			// var yArray = this.coordinates.map(function(x){return x.y;});
+			var yMap;
+			if(this.coordinates.length == 1 && d3.min(this.yArray) == 0){
+				this.xShift = height;
+				return d3.scaleLinear().domain([1, 0]).range([0, height]).nice();
+			}
 			if(d3.min(this.yArray)<0){
-				var yMap = d3.scaleLinear().domain([d3.max(this.yArray), d3.min(this.yArray)]).range([0, height]).nice();
-				this.xShift = yMap(0);
-				return yMap;
+				if(d3.max(this.yArray)<0){
+					yMap = d3.scaleLinear().domain([0, d3.min(this.yArray)]).range([0, height]).nice();
+					this.xShift = yMap(0);
+					return yMap;
+				}
+				else{
+					yMap = d3.scaleLinear().domain([d3.max(this.yArray), d3.min(this.yArray)]).range([0, height]).nice();
+					this.xShift = yMap(0);
+					return yMap;
+				}
 			}
 			else{
 				this.xShift = height;
@@ -87,14 +111,34 @@ var app = new Vue({
 			return scale(d.y);
 		},
 		drawLineReg: function(){
-			scaleX = this.xScale();
-			scaleY = this.yScale();
+			var scaleX = this.xScale();
+			var scaleY = this.yScale();
+			var a = this.lineReg.a;
+			var b = this.lineReg.b;
+			x1 = this.xScale().domain()[0];
+			y1 = a*x1 + b;
+			x2 = this.xScale().domain()[1];
+			y2 = a*x2 + b;
+			xScale = this.xScale();
+			yScale = this.yScale();
+			lineCoord = [
+				{x: x1, y: y1},
+				{x: x2, y: y2}
+			];
+			var line = d3.line(lineCoord).x(function(d){return xScale(d.x);}).y(function(d){return yScale(d.y);});
+			svgSelection.append("g").append("path")
+				.attr("d", line(lineCoord))
+				.attr("stroke-width", 1)
+				.attr("stroke", "black")
+				.attr("fill", "none")
+				.attr("class", "line");
 		}
 	},
 	mounted: function(){
 		svgSelection.selectAll("circle").data(this.coordinates).enter().append("circle").attr("r", 3).attr("fill", "black").attr("cx", this.xMap).attr("cy", this.yMap);
 		this.xAxis(svgSelection);
 		this.yAxis(svgSelection);
+		this.drawLineReg();
 	},
 	watch: {
 		coordinates: {
