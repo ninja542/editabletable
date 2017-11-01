@@ -249,13 +249,44 @@ var app = new Vue({
 				return this.coordinates;
 			}
 			return newCoords;
+		},
+		changeX: function(){
+			if (this.linearization.includes("Square x")==true){
+				if (this.linearization.includes("1/x")==true){
+					return "(<sup>1</sup>&frasl;<sub>x<sup>2</sup></sub>)";
+				}
+				else {
+					return "(x<sup>2</sup>)";
+				}
+			}
+			else if (this.linearization.includes("1/x")==true){
+				return "(<sup>1</sup>&frasl;<sub>x</sub>)";
+			}
+			else{
+				return "x";
+			}
+		},
+		changeY: function(){
+			if (this.linearization.includes("Square y")==true){
+				if (this.linearization.includes("1/y")==true){
+					return "(<sup>1</sup>&frasl;<sub>y<sup>2</sup></sub>)";
+				}
+				else {
+					return "(y<sup>2</sup>)";
+				}
+			}
+			else if (this.linearization.includes("1/y")==true){
+				return "(<sup>1</sup>&frasl;<sub>y</sub>)";
+			}
+			else{
+				return "y";
+			}
 		}
 	},
 	watch: {
 		detectLinearization: {
 			deep: true,
 			handler: function(val){
-				console.log("changed");
 				//insert d3 chart update
 				this.update();
 			}
