@@ -15,9 +15,9 @@
 					<th>x</th>
 					<th>y</th>
 				</tr>
-				<tr v-for="(item, index) in coordinates">
-					<td v-on:click="edit=true"><div v-show="edit==false">{{item.x}}</div><input v-show="edit" v-bind:value="item.x" v-model.number="item.x" v-on:keyup.esc="edit=false" type="number" v-focus></td>
-					<td v-on:click="edit=true"><div v-show="edit==false">{{item.y}}</div><input v-show="edit"  v-bind:value="item.y" v-model.number="item.y" v-on:keyup.esc="edit=false" type="number"></td>
+				<tr v-for="(item, index) in detectLinearization">
+					<td v-on:click="edit=true"><div v-show="edit==false">{{+parseFloat(item.x).toFixed(4)}}</div><input v-show="edit" v-bind:value="item.x" v-model.number="item.x" v-on:keyup.esc="edit=false" type="number" v-focus></td>
+					<td v-on:click="edit=true"><div v-show="edit==false">{{+parseFloat(item.y).toFixed(4)}}</div><input v-show="edit"  v-bind:value="item.y" v-model.number="item.y" v-on:keyup.esc="edit=false" type="number"></td>
 					<td v-show="index != 0" class="delete" v-on:click="deleteRow(item)">
 						<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
 							<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
@@ -35,21 +35,23 @@
 			<input type="checkbox" id="1/x" v-model="linearization" value="1/x"><label for="1/x">1/x</label>
 			<input type="checkbox" id="1/y" v-model="linearization" value="1/y"><label for="1/y">1/y</label>
 			<div>
-				<h2> Statistics </h2>
+				<h2> Mode </h2>
 				<input type="radio" name="mode" id="Physics" v-model="mode" value="Physics" checked><label for="Physics">Physics Mode</label>
 				<input type="radio" name="mode" id="Stats" v-model="mode" value="Stats"><label for="Stats">Statistics Mode</label>
 				<h3>Equation</h3>
-				<p> y = {{parseFloat(lineRegEq[0]).toFixed(4)}}x + {{parseFloat(lineRegEq[1]).toFixed(4)}}</p>
-				<p> r = {{lineRegEq[6]}}</p>
-				<p> r<sup>2</sup> = {{lineRegEq[7]}}</p>
-				<h3> Statistic Info </h3>
-				<p> If Sample is selected, Standard Deviation will be adjusted using Bessel's correction </p>
-				<input type="radio" name="sample" id="Population" v-model="sdMode"  value="Population" checked><label for="Population">Entire Population</label>
-				<input type="radio" name="sample" id="Sample" v-model="sdMode" value="Sample"><label for="Sample">Sample</label>
-				<p> Standard Deviation of X: {{lineRegEq[5]}} </p>
-				<p> Standard Deviation of Y: {{lineRegEq[4]}} </p>
-				<p> Mean of X = {{lineRegEq[3]}}</p>
-				<p> Mean of Y = {{lineRegEq[2]}}</p>
+				<p> y = {{+parseFloat(lineRegEq[0]).toFixed(4)}}x + {{+parseFloat(lineRegEq[1]).toFixed(4)}}</p>
+				<p> r = {{+parseFloat(lineRegEq[6]).toFixed(4)}}</p>
+				<p> r<sup>2</sup> = {{+parseFloat(lineRegEq[7]).toFixed(4)}}</p>
+				<div v-if="mode == 'Stats'">
+					<h3> Statistic Info </h3>
+					<p> If Sample is selected, Standard Deviation will be adjusted <br> using Bessel's correction </p>
+					<input type="radio" name="sample" id="Population" v-model="sdMode"  value="Population" checked><label for="Population">Entire Population</label>
+					<input type="radio" name="sample" id="Sample" v-model="sdMode" value="Sample"><label for="Sample">Sample</label>
+					<p> Standard Deviation of X: {{+parseFloat(lineRegEq[5]).toFixed(4)}} </p>
+					<p> Standard Deviation of Y: {{+parseFloat(lineRegEq[4]).toFixed(4)}} </p>
+					<p> Mean of X = {{+parseFloat(lineRegEq[3]).toFixed(4)}}</p>
+					<p> Mean of Y = {{+parseFloat(lineRegEq[2]).toFixed(4)}}</p>
+				</div>
 			</div>
 		</div>
 	</div>

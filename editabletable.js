@@ -9,14 +9,6 @@ var app = new Vue({
 	el: "#app",
 	data: {
 		edit: false,
-		input: [
-			{x: 43, y: 99},
-			{x: 21, y: 65},
-			{x: 25, y: 79},
-			{x: 42, y: 75},
-			{x: 57, y: 87},
-			{x: 59, y: 81}
-		],
 		coordinates: [
 			{x: 43, y: 99},
 			{x: 21, y: 65},
@@ -34,7 +26,7 @@ var app = new Vue({
 	methods: {
 		update: function(){
 			// JOIN select chart and bind data to circles
-			var dataSelection = svgSelection.selectAll("circle").data(this.coordinates);
+			var dataSelection = svgSelection.selectAll("circle").data(this.detectLinearization);
 			// UPDATE old elements
 			dataSelection.attr("r", 3).attr("fill", "black").transition().duration(500).attr("cx", this.xMap).attr("cy", this.yMap);
 			// ENTER append new circles to new data
@@ -91,7 +83,7 @@ var app = new Vue({
 		},
 		yScale: function(){
 			var yMap;
-			if(this.coordinates.length == 1 && d3.min(this.yArray) == 0){
+			if(this.detectLinearization.length == 1 && d3.min(this.yArray) == 0){
 				this.xShift = height;
 				return d3.scaleLinear().domain([1, 0]).range([0, height]).nice();
 			}
@@ -129,14 +121,6 @@ var app = new Vue({
 			svgSelection.transition().duration(500).select(".line")
 				.attr("d", line(lineData));
 		},
-		detectLinearization: function(){
-			// IMPORTANT: Maybe add a new coordinate system, so you can return back
-			if (this.linearization.includes("Square x")==true){
-				//change coordinates
-				console.log("changing coords");
-			}
-			return this.linearization.includes("Square x") == true;
-		}
 	},
 	mounted: function(){
 		svgSelection.selectAll("circle").data(this.coordinates).enter().append("circle").attr("r", 3).attr("fill", "black").attr("cx", this.xMap).attr("cy", this.yMap);
@@ -152,29 +136,20 @@ var app = new Vue({
 				.attr("stroke", "black")
 				.attr("class", "line");
 	},
-	watch: {
-		coordinates: {
-			deep: true,
-			handler: function(val){
-				//insert d3 chart update
-				this.update();
-			}
-		}
-	},
 	computed: {
 		xArray: function(){
-			return this.coordinates.map(function(x){return x.x;});
+			return this.detectLinearization.map(x => x.x);
 		},
 		yArray: function(){
-			return this.coordinates.map(function(x){return x.y;});
+			return this.detectLinearization.map(x => x.y);
 		},
 		lineRegEq: function(){
-			var yArray = this.coordinates.map(function(x){return x.y;});
-			var xArray = this.coordinates.map(function(x){return x.x;});
+			var yArray = this.detectLinearization.map(x => x.y);
+			var xArray = this.detectLinearization.map(x => x.x);
 			var sumY = yArray.reduce((a,b) => a + b);
 			var sumX = xArray.reduce((a,b) => a + b);
-			var sumY2 = yArray.map(function(x){return Math.pow(x, 2);}).reduce((a,b) => a + b);
-			var sumX2 = xArray.map(function(x){return Math.pow(x, 2);}).reduce((a,b) => a + b);
+			var sumY2 = yArray.map(x =>  Math.pow(x, 2)).reduce((a,b) => a + b);
+			var sumX2 = xArray.map(x =>  Math.pow(x, 2)).reduce((a,b) => a + b);
 			var sumXY = yArray.reduce((a,b,i) => a + b*xArray[i], 0);
 			var n = yArray.length;
 			var a = ((n*sumXY)-(sumX*sumY))/((n*sumX2)-(Math.pow(sumX, 2)));
@@ -184,19 +159,19 @@ var app = new Vue({
 			var sdY;
 			var sdX;
 			if (this.sdMode == "Population"){
-				sdY = Math.sqrt(yArray.map(function(y){return Math.pow(y - yMean, 2);})
+				sdY = Math.sqrt(yArray.map(y => Math.pow(y - yMean, 2))
 					.reduce((a,b) => a+b)/yArray.length);
-				sdX = Math.sqrt(xArray.map(function(x){return Math.pow(x - xMean, 2);})
+				sdX = Math.sqrt(xArray.map(x => Math.pow(x - xMean, 2))
 					.reduce((a,b) => a+b)/xArray.length);
 			}
 			else{
-				sdY = Math.sqrt(yArray.map(function(y){return Math.pow(y - yMean, 2);})
+				sdY = Math.sqrt(yArray.map(y => Math.pow(y - yMean, 2))
 					.reduce((a,b) => a+b)/(yArray.length-1));
 				sdX = Math.sqrt(xArray.map(function(x){return Math.pow(x - xMean, 2);})
 					.reduce((a,b) => a+b)/(xArray.length-1));
 			}
-			var r = xArray.map(function(x){return (x - xMean)/sdX;})
-				.reduce((a,b,i) => a + b*yArray.map(function(y){return (y - yMean)/sdY;})[i], 0)/xArray.length;
+			var r = xArray.map(function(x){return (x - xMean)/Math.sqrt(xArray.map(x => Math.pow(x - xMean, 2)).reduce((a,b) => a+b)/xArray.length);})
+				.reduce((a,b,i) => a + b*yArray.map(function(y){return (y - yMean)/Math.sqrt(yArray.map(function(y){return Math.pow(y - yMean, 2);}).reduce((a,b) => a+b)/yArray.length);})[i], 0)/xArray.length;
 			return [a, b, yMean, xMean, sdY, sdX, r, Math.pow(r, 2)];
 		},
 		lineReg: function(){
@@ -207,6 +182,83 @@ var app = new Vue({
 			x2 = this.xScale().domain()[1];
 			y2 = a*x2 + b;
 			return [{x: x1, y: y1}, {x: x2, y: y2}];
+		},
+		detectLinearization: function(){
+			// IMPORTANT: Maybe add a new coordinate system, so you can return back
+			var newCoords = [];
+			if (this.linearization.includes("Square x")==true){
+				// change coordinates
+				if (newCoords.length == 0){
+					for (var i=0; i<this.coordinates.length; i++){
+						// square x coordinates
+						newCoords.push({x: Math.pow(this.coordinates[i].x, 2), y: this.coordinates[i].y});
+					}
+				}
+				else {
+					for (var a=0; a<this.coordinates.length; a++){
+						newCoords[a].x = Math.pow(newCoords[a], 2);
+					}
+				}
+			}
+			if (this.linearization.includes("Square y")==true){
+				// tests if anything else was manipulated
+				if (newCoords.length==0){
+					// adds x points and squares y points
+					for (var j=0; j<this.coordinates.length; j++){
+						newCoords.push({x: this.coordinates[j].x, y: Math.pow(this.coordinates[j].y, 2)});
+					}
+				}
+				else {
+					// changes y points to sqaure
+					for (var k=0; k<this.coordinates.length; k++){
+						newCoords[k].y = Math.pow(newCoords[k].y, 2);
+					}
+				}
+			}
+			if (this.linearization.includes("1/x")==true){
+				// tests if anything else was manipulated
+				if (newCoords.length==0){
+					// adds x points and squares y points
+					for (var l=0; l<this.coordinates.length; l++){
+						newCoords.push({x: 1/(this.coordinates[l].x), y: this.coordinates[l].y});
+					}
+				}
+				else {
+					// takes reciprocal of y
+					for (var m=0; m<this.coordinates.length; m++){
+						newCoords[m].x = (1/newCoords[m].x);
+					}
+				}
+			}
+			if (this.linearization.includes("1/y")==true){
+				// tests if anything else was manipulated
+				if (newCoords.length==0){
+					// adds x points and squares y points
+					for (var b=0; b<this.coordinates.length; b++){
+						newCoords.push({x: this.coordinates[b].x, y: (1/this.coordinates[b].y)});
+					}
+				}
+				else {
+					// takes reciprocal of y
+					for (var c=0; c<this.coordinates.length; c++){
+						newCoords[c].y = (1/newCoords[c].y);
+					}
+				}
+			}
+			else if (this.linearization.length==0){
+				return this.coordinates;
+			}
+			return newCoords;
+		}
+	},
+	watch: {
+		detectLinearization: {
+			deep: true,
+			handler: function(val){
+				console.log("changed");
+				//insert d3 chart update
+				this.update();
+			}
 		}
 	},
 	directives: {
@@ -216,5 +268,9 @@ var app = new Vue({
 	      el.focus();
 	    }
 	  }
+	},
+	filters: {
+		linearizeX: function(value){
+		}
 	}
 });

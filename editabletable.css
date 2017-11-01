@@ -6,17 +6,20 @@ th, td {
 	border: 1px solid black;
 }
 td {
-	width: 50px;
+	width: 60px;
 	height: 40px;
 }
 input {
-	width: 50px;
+	width: 60px;
 }
 button {
 	margin-top: 8px;
 }
 .delete {
 	border: none;
+}
+.delete:hover {
+	cursor: pointer;
 }
 #body {
 	display: flex;
