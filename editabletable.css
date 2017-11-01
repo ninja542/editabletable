@@ -27,3 +27,6 @@ button {
 }
 #app, #chart {
 }
+h1, h2, h3, p {
+	font-family: "Open Sans", sans-serif;
+}
