@@ -284,13 +284,20 @@ var app = new Vue({
 		}
 	},
 	watch: {
+		coordinates: {
+			deep: true,
+			handler: function(val){
+				//insert d3 chart update
+				this.update();
+			}
+		},
 		detectLinearization: {
 			deep: true,
 			handler: function(val){
 				//insert d3 chart update
 				this.update();
 			}
-		}
+		},
 	},
 	directives: {
 	  focus: {
