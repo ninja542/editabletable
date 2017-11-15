@@ -1,14 +1,19 @@
+// defines margin lengths
 const margin = {top:52, right:52, bottom:52, left:52};
 var height = 650 - margin.top - margin.bottom,
 		width = 650 - margin.right - margin.left;
+// makes a svg group within the svg, and transforms it so that the graph is centered with the correct margins
 var svgSelection = d3.select("#body").append("svg").attr("id", "chart")
 		.attr("width", width + margin.right + margin.left)
 		.attr("height", height + margin.top + margin.bottom)
 		.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+// declares Vue App
 var app = new Vue({
 	el: "#app",
 	data: {
+		// whether the table is being edited or not
 		edit: false,
+		// this stores the coordinates, this is the initial values, but when the user updates coordinates, the vue object also updates
 		coordinates: [
 			{x: 43, y: 99},
 			{x: 21, y: 65},
@@ -17,12 +22,16 @@ var app = new Vue({
 			{x: 57, y: 87},
 			{x: 59, y: 81}
 		],
+		// shifting the x and y axes for negative values
 		xShift: 0,
 		yShift: 0,
+		// declares what types of linearization are being applied
 		linearization: [],
+		// settings for conditionally rendering specific data
 		mode: "Physics",
 		sdMode: "Population"
 	},
+	// methods are functions defined in the Vue object
 	methods: {
 		update: function(){
 			// JOIN select chart and bind data to circles
