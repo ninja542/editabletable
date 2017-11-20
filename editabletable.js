@@ -37,69 +37,58 @@ var app = new Vue({
 	// methods are functions defined in the Vue object
 	methods: {
 		update: function(){
-			// JOIN: select chart and bind data to circles
+			// JOIN select chart and bind data to circles
 			var dataSelection = svgSelection.selectAll("circle").data(this.detectLinearization);
-			// UPDATE: old elements
+			// UPDATE old elements
 			dataSelection.attr("r", 3).attr("fill", "black").transition().duration(500).attr("cx", this.xMap).attr("cy", this.yMap);
-			// ENTER: append new circles to new data
+			// ENTER append new circles to new data
 			dataSelection.enter().append("circle").attr("r", 3).attr("fill", "black").attr("cx", this.xMap).attr("cy", this.yMap);
-			// update line by calling this function
+			// update line
 			this.updateLineReg(this.lineReg);
 			// update axes
 			svgSelection.select(".x").transition().duration(500).call(d3.axisBottom(this.xScale())).attr("transform", "translate(0, "+ (this.xShift) +")");
 			svgSelection.select(".y").transition().duration(500).call(d3.axisLeft(this.yScale())).attr("transform", "translate("+this.yShift+", 0)");
-			// EXIT: delete removed data
+			// EXIT delete removed data
 			dataSelection.exit().remove();
 		},
-		// adds an extra row. Called when "Add Row" button is pressed
 		addRow: function(){
 			this.coordinates.push({x: null, y: null});
 			// focus();
 		},
-		// similar to addRow
 		deleteRow: function(item){
-			// splicing removes from the index of the item that is going to deleted. 1 means that only one index gets deleted.
 			this.coordinates.splice(this.coordinates.indexOf(item), 1);
 			this.update();
 		},
-		// sets the x axis scale, the conditionals test whether there are negative values
 		xScale: function(){
 			var xMap;
-			// if there is a negative value
+			if(d3.max(this.xArray) == 0 && d3.min(this.xArray) == 0){
+				this.yShift = 0;
+				return d3.scaleLinear().domain([0, 1]).range([0, width]).nice();
+			}
 			if(d3.min(this.xArray)<0){
-				// if all values of x are negative
 				if(d3.max(this.xArray)<0){
-					// maps domain of the smallest number to 0 to the range of the graph width
-					xMap = d3.scaleLinear().domain([d3.min(this.xArray), 0]).range([0, width]).nice(); // nice means that the numbers are nice
-					// the y axis is shifted to the left where 0 is. xMap is a function that takes the value 0 and turns it into a pixel value relative to the svg coordinate space, where (0,0) is in the top left corner
+					xMap = d3.scaleLinear().domain([d3.min(this.xArray), 0]).range([0, width]).nice();
 					this.yShift = xMap(0);
 					return xMap;
 				}
-				// if there are both positive and negative x values
 				else {
-					// similar to above, d3.extent is just the array from the minimum to maximum x value
 					xMap = d3.scaleLinear().domain(d3.extent(this.xArray)).range([0, width]).nice();
-					// yShift is still needed, as we have negative x values
 					this.yShift = xMap(0);
 					return xMap;
 				}
 			}
-			// all x values are positive
 			else{
 				this.yShift = 0;
 				return d3.scaleLinear().domain([0, d3.max(this.xArray)]).range([0, width]).nice();
 			}
 		},
-		// this forms the xAxis
 		xAxis: function(container){
 			var xAxis = d3.axisBottom(this.xScale());
 			container.append("g")
-				// translates the x axis calculated from yScale up and down
 				.attr("transform", "translate(0,"+(this.xShift)+")")
 				.attr("class", "x axis")
 				.call(xAxis);
 		},
-		// function to convert values, calls xScale to use the correct scale at all times
 		xMap: function(d){
 			scale = this.xScale();
 			return scale(d.x);
