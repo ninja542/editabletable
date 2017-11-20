@@ -22,15 +22,12 @@ var app = new Vue({
 			{x: 57, y: 87},
 			{x: 59, y: 81}
 		],
-		table2coord: [
-			{x: 0, y: 0},
-			{x: 1, y: 1}
-		],
-		isActive: 1,
+		// shifting the x and y axes for negative values
 		xShift: 0,
 		yShift: 0,
+		// declares what types of linearization are being applied
+		linearization: [],
 		// settings for conditionally rendering specific data
-		linearization2: [],
 		mode: "Physics",
 		sdMode: "Population"
 	},
@@ -293,74 +290,7 @@ var app = new Vue({
 			else{
 				return "y";
 			}
-		},
-		detectLinearization2: function(){
-			// IMPORTANT: Maybe add a new coordinate system, so you can return back
-			var newCoords = [];
-			if (this.linearization2.includes("Square x")==true){
-				// change coordinates
-				if (newCoords.length == 0){
-					for (var i=0; i<this.table2coord.length; i++){
-						// square x coordinates
-						newCoords.push({x: Math.pow(this.table2coord[i].x, 2), y: this.table2coord[i].y});
-					}
-				}
-				else {
-					for (var a=0; a<this.table2coord.length; a++){
-						newCoords[a].x = Math.pow(newCoords[a], 2);
-					}
-				}
-			}
-			if (this.linearization2.includes("Square y")==true){
-				// tests if anything else was manipulated
-				if (newCoords.length==0){
-					// adds x points and squares y points
-					for (var j=0; j<this.table2coord.length; j++){
-						newCoords.push({x: this.table2coord[j].x, y: Math.pow(this.table2coord[j].y, 2)});
-					}
-				}
-				else {
-					// changes y points to sqaure
-					for (var k=0; k<this.table2coord.length; k++){
-						newCoords[k].y = Math.pow(newCoords[k].y, 2);
-					}
-				}
-			}
-			if (this.linearization2.includes("1/x")==true){
-				// tests if anything else was manipulated
-				if (newCoords.length==0){
-					// adds x points and squares y points
-					for (var l=0; l<this.table2coord.length; l++){
-						newCoords.push({x: 1/(this.table2coord[l].x), y: this.table2coord[l].y});
-					}
-				}
-				else {
-					// takes reciprocal of y
-					for (var m=0; m<this.table2coord.length; m++){
-						newCoords[m].x = (1/newCoords[m].x);
-					}
-				}
-			}
-			if (this.linearization2.includes("1/y")==true){
-				// tests if anything else was manipulated
-				if (newCoords.length==0){
-					// adds x points and squares y points
-					for (var b=0; b<this.table2coord.length; b++){
-						newCoords.push({x: this.table2coord[b].x, y: (1/this.table2coord[b].y)});
-					}
-				}
-				else {
-					// takes reciprocal of y
-					for (var c=0; c<this.table2coord.length; c++){
-						newCoords[c].y = (1/newCoords[c].y);
-					}
-				}
-			}
-			else if (this.linearization2.length==0){
-				return this.table2coord;
-			}
-			return newCoords;
-		},
+		}
 	},
 	watch: {
 		coordinates: {
