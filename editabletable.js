@@ -7,7 +7,7 @@ var labels = new Vue({
 	}
 });
 // defines margin lengths
-const margin = {top:5, right:20, bottom:60, left:60};
+const margin = {top:5, right:20, bottom:60, left:85};
 var height = 630 - margin.top - margin.bottom,
 		width = 650 - margin.right - margin.left;
 // makes a svg group within the svg, and transforms it so that the graph is centered with the correct margins
