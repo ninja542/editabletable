@@ -1,9 +1,17 @@
+var labels = new Vue({
+	el: "#chartcontainer",
+	data: {
+		edit: false,
+		xLabel: "x axis (units)",
+		yLabel: "y axis (units)"
+	}
+});
 // defines margin lengths
-const margin = {top:52, right:52, bottom:52, left:52};
-var height = 650 - margin.top - margin.bottom,
+const margin = {top:5, right:20, bottom:60, left:60};
+var height = 630 - margin.top - margin.bottom,
 		width = 650 - margin.right - margin.left;
 // makes a svg group within the svg, and transforms it so that the graph is centered with the correct margins
-var svgSelection = d3.select("#body").append("svg").attr("id", "chart")
+var svgSelection = d3.select("#chartcontainer").append("svg").attr("id", "chart")
 		.attr("width", width + margin.right + margin.left)
 		.attr("height", height + margin.top + margin.bottom)
 		.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -29,7 +37,7 @@ var app = new Vue({
 		linearization: [],
 		// settings for conditionally rendering specific data
 		mode: "Physics",
-		sdMode: "Population"
+		sdMode: "Population",
 	},
 	// methods are functions defined in the Vue object
 	methods: {
@@ -134,13 +142,14 @@ var app = new Vue({
 			scale = this.yScale();
 			return scale(d.y);
 		},
+		// updates the line of best fit by grabbing the new scales and selecting the line and replacing with new point data
 		updateLineReg: function(lineData){
 			scaleX = this.xScale();
 			scaleY = this.yScale();
 			var line = d3.line().x(function(d){return scaleX(d.x);}).y(function(d){return scaleY(d.y);});
 			svgSelection.transition().duration(500).select(".line")
 				.attr("d", line(lineData));
-		},
+		}
 	},
 	mounted: function(){
 		svgSelection.selectAll("circle").data(this.coordinates).enter().append("circle").attr("r", 3).attr("fill", "black").attr("cx", this.xMap).attr("cy", this.yMap);
@@ -317,18 +326,15 @@ var app = new Vue({
 				//insert d3 chart update
 				this.update();
 			}
-		},
+		}
 	},
 	directives: {
 	  focus: {
 	    // directive definition
+	    // when a new element is inserted into the DOM, the browser focus is placed on the element to ease faster data entering
 	    inserted: function (el) {
 	      el.focus();
 	    }
 	  }
-	},
-	filters: {
-		linearizeX: function(value){
-		}
 	}
 });

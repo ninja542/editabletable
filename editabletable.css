@@ -4,12 +4,13 @@ table {
 th, td {
 	padding: 5px;
 	border: 1px solid black;
+	font-family: "Open Sans", sans-serif;
 }
 td {
 	width: 60px;
 	height: 40px;
 }
-input {
+#app input {
 	width: 60px;
 }
 button {
@@ -23,11 +24,37 @@ button {
 }
 #body {
 	display: flex;
-	justify-content: space-evenly;
 	flex-wrap: wrap;
-}
-#app, #chart {
+	align-items: flex-start;
+	margin-right: 0;
 }
 h1, h2, h3, p {
 	font-family: "Open Sans", sans-serif;
+}
+#xlabel input, #ylabel input {
+	width: 200px;
+	text-align: center;
+	font-family: "Open Sans", sans-serif;
+}
+#xlabel div, #ylabel div {
+	width: 200px;
+	text-align: center;
+	font-family: "Open Sans", sans-serif;
+}
+#xlabel {
+	width: 200px;
+	margin: auto;
+	position: relative;
+	top: 640px;
+}
+#ylabel {
+	width: 200px;
+	transform: rotate(-90deg);
+	position: relative;
+	right: 80px;
+	top: 250px;
+}
+#chartcontainer {
+	overflow: hidden;
+	margin-top: -25px;
 }

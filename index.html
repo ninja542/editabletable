@@ -9,7 +9,7 @@
 		<div id="app">
 			<h3>Instructions</h3>
 			<p>Click on the Data Table or click the edit button to edit the table.</p>
-			<p>Use Tab and Shift+Tab for easy movement around the table</p>
+			<p>Use Tab to move to the next table cell and Shift+Tab to move to the previous table cell</p>
 			<table>
 				<tr>
 					<th v-html="changeX"></th>
@@ -55,6 +55,16 @@
 				</div>
 			</div>
 		</div>
+		<div id="chartcontainer">
+			<div id="xlabel">
+				<input type="text" v-model="xLabel" v-show="edit" v-on:blur="edit=false">
+				<div v-show="edit==false" v-on:click="edit=true">{{xLabel}}</div>
+			</div>
+			<div id="ylabel">
+				<input type="text" v-model="yLabel" v-show="edit" v-on:blur="edit=false">
+				<div v-show="edit==false" v-on:click="edit=true">{{yLabel}}</div>
+			</div>
+		</div>
 	</div>
 <!-- 	<script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
 	<script>
@@ -70,7 +80,8 @@
 		firebase.initializeApp(config);
 	</script> -->
 	<script src="https://d3js.org/d3.v4.min.js"></script>
-	<script src="vue.min.js"></script>
+	<!-- <script src="vue.min.js"></script> -->
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue"></script>
 	<script src="editabletable.js"></script>
 	</body>
 </html>
