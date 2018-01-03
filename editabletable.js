@@ -149,6 +149,9 @@ var app = new Vue({
 			var line = d3.line().x(function(d){return scaleX(d.x);}).y(function(d){return scaleY(d.y);});
 			svgSelection.transition().duration(500).select(".line")
 				.attr("d", line(lineData));
+		},
+		clearAll: function(){
+			this.coordinates.forEach((a)=>{a.x=0;a.y=0;});
 		}
 	},
 	mounted: function(){
