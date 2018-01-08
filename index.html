@@ -58,11 +58,11 @@
 		</div>
 		<div id="chartcontainer">
 			<div id="xlabel">
-				<input type="text" v-model="xLabel" v-show="edit" v-on:blur="edit=false" v-on:keyup.esc="edit=false" v-on:keyup.enter="edit=false">
+				<input type="text" v-model="xLabel" v-show="edit" v-on:keyup.esc="edit=false" v-on:keyup.enter="edit=false">
 				<div v-show="edit==false" v-on:click="edit=true">{{xLabel}}</div>
 			</div>
 			<div id="ylabel">
-				<input type="text" v-model="yLabel" v-show="edit" v-on:blur="edit=false" v-on:keyup.esc="edit=false" v-on:keyup.enter="edit=false">
+				<input type="text" v-model="yLabel" v-show="edit" v-on:keyup.esc="edit=false" v-on:keyup.enter="edit=false">
 				<div v-show="edit==false" v-on:click="edit=true">{{yLabel}}</div>
 			</div>
 		</div>
