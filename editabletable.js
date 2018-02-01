@@ -1,4 +1,4 @@
-var labels = new Vue({
+new Vue({
 	el: "#chartcontainer",
 	data: {
 		edit: false,
@@ -16,7 +16,7 @@ var svgSelection = d3.select("#chartcontainer").append("svg").attr("id", "chart"
 		.attr("height", height + margin.top + margin.bottom)
 		.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 // declares Vue App
-var app = new Vue({
+new Vue({
 	el: "#app",
 	data: {
 		// whether the table is being edited or not
@@ -180,7 +180,7 @@ var app = new Vue({
 			var xArray = this.detectLinearization.map(x => x.x);
 			var sumY = yArray.reduce((a,b) => a + b);
 			var sumX = xArray.reduce((a,b) => a + b);
-			var sumY2 = yArray.map(x =>  Math.pow(x, 2)).reduce((a,b) => a + b);
+			// var sumY2 = yArray.map(x =>  Math.pow(x, 2)).reduce((a,b) => a + b);
 			var sumX2 = xArray.map(x =>  Math.pow(x, 2)).reduce((a,b) => a + b);
 			var sumXY = yArray.reduce((a,b,i) => a + b*xArray[i], 0);
 			var n = yArray.length;
