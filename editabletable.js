@@ -48,13 +48,13 @@ new Vue({
 			dataSelection.attr("r", 3).attr("fill", "black").transition().duration(500).attr("cx", this.xMap).attr("cy", this.yMap);
 			// ENTER: append new circles to new data
 			dataSelection.enter().append("circle").attr("r", 3).attr("fill", "black").attr("cx", this.xMap).attr("cy", this.yMap);
+			// EXIT: delete removed data
+			dataSelection.exit().remove();
 			// update line by calling this function
 			this.updateLineReg(this.lineReg);
 			// update axes
 			svgSelection.select(".x").transition().duration(500).call(d3.axisBottom(this.xScale())).attr("transform", "translate(0, "+ (this.xShift) +")");
 			svgSelection.select(".y").transition().duration(500).call(d3.axisLeft(this.yScale())).attr("transform", "translate("+this.yShift+", 0)");
-			// EXIT: delete removed data
-			dataSelection.exit().remove();
 		},
 		// adds an extra row. Called when "Add Row" button is pressed
 		addRow: function(){
