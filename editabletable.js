@@ -259,55 +259,27 @@ new Vue({
 					return obj;
 				});
 			}
-			if (this.linearization.includes("ln(x)") == true){
-				newCoords = newCoords.map((i) => {
-					var obj = {};
-					obj.x = Math.log(i.x);
-					obj.y = i.y;
-					return obj;
-				});
-			}
-			if (this.linearization.includes("ln(y)") == true){
-				newCoords = newCoords.map((i) => {
-					var obj = {};
-					obj.x = i.x;
-					obj.y = Math.log(i.y);
-					return obj;
-				});
-			}
 			return newCoords;
 		},
 		changeX: function(){
-			if (this.linearization.includes("Square x")==true){
-				if (this.linearization.includes("1/x")==true){
-					return "(<sup>1</sup>&frasl;<sub>x<sup>2</sup></sub>)";
-				}
-				else {
-					return "(x<sup>2</sup>)";
-				}
+			var x = "x";
+			if (this.linearization.includes("Square x") == true){
+				x = x + "<sup>2</sup>";
 			}
-			else if (this.linearization.includes("1/x")==true){
-				return "(<sup>1</sup>&frasl;<sub>x</sub>)";
+			if (this.linearization.includes("1/x") == true){
+				x = "(<sup>1</sup>&frasl;<sub>" + x + "</sub>)";
 			}
-			else{
-				return "x";
-			}
+			return x;
 		},
 		changeY: function(){
-			if (this.linearization.includes("Square y")==true){
-				if (this.linearization.includes("1/y")==true){
-					return "(<sup>1</sup>&frasl;<sub>y<sup>2</sup></sub>)";
-				}
-				else {
-					return "(y<sup>2</sup>)";
-				}
+			var y = "y";
+			if (this.linearization.includes("Square y") == true){
+				y = y + "<sup>2</sup>";
 			}
-			else if (this.linearization.includes("1/y")==true){
-				return "(<sup>1</sup>&frasl;<sub>y</sub>)";
+			if (this.linearization.includes("1/y") == true){
+				y = "(<sup>1</sup>&frasl;<sub>" + y + "</sub>)";
 			}
-			else{
-				return "y";
-			}
+			return y;
 		}
 	},
 	watch: {
