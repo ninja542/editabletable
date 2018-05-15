@@ -218,67 +218,62 @@ new Vue({
 		detectLinearization: function(){
 			// IMPORTANT: Maybe add a new coordinate system, so you can return back
 			var newCoords = [];
+			newCoords = this.coordinates.map((i) => {
+				var obj = {};
+				obj.x = i.x;
+				obj.y = i.y;
+				return obj;
+			});
 			if (this.linearization.includes("Square x")==true){
 				// change coordinates
-				if (newCoords.length == 0){
-					for (var i=0; i<this.coordinates.length; i++){
-						// square x coordinates
-						newCoords.push({x: Math.pow(this.coordinates[i].x, 2), y: this.coordinates[i].y});
-					}
-				}
-				else {
-					for (var a=0; a<this.coordinates.length; a++){
-						newCoords[a].x = Math.pow(newCoords[a], 2);
-					}
-				}
+				newCoords = newCoords.map((i) => {
+					var obj = {};
+					obj.x = Math.pow(i.x, 2);
+					obj.y = i.y;
+					return obj;
+				});
 			}
 			if (this.linearization.includes("Square y")==true){
 				// tests if anything else was manipulated
-				if (newCoords.length==0){
-					// adds x points and squares y points
-					for (var j=0; j<this.coordinates.length; j++){
-						newCoords.push({x: this.coordinates[j].x, y: Math.pow(this.coordinates[j].y, 2)});
-					}
-				}
-				else {
-					// changes y points to sqaure
-					for (var k=0; k<this.coordinates.length; k++){
-						newCoords[k].y = Math.pow(newCoords[k].y, 2);
-					}
-				}
+				newCoords = newCoords.map((i) => {
+					var obj = {};
+					obj.x = i.x;
+					obj.y = Math.pow(i.y, 2);
+					return obj;
+				});
 			}
 			if (this.linearization.includes("1/x")==true){
-				// tests if anything else was manipulated
-				if (newCoords.length==0){
-					// adds x points and squares y points
-					for (var l=0; l<this.coordinates.length; l++){
-						newCoords.push({x: 1/(this.coordinates[l].x), y: this.coordinates[l].y});
-					}
-				}
-				else {
-					// takes reciprocal of y
-					for (var m=0; m<this.coordinates.length; m++){
-						newCoords[m].x = (1/newCoords[m].x);
-					}
-				}
+				// takes reciprocal of x
+				newCoords = newCoords.map((i) => {
+					var obj = {};
+					obj.x = 1/i.x;
+					obj.y = i.y;
+					return obj;
+				});
 			}
 			if (this.linearization.includes("1/y")==true){
-				// tests if anything else was manipulated
-				if (newCoords.length==0){
-					// adds x points and squares y points
-					for (var b=0; b<this.coordinates.length; b++){
-						newCoords.push({x: this.coordinates[b].x, y: (1/this.coordinates[b].y)});
-					}
-				}
-				else {
-					// takes reciprocal of y
-					for (var c=0; c<this.coordinates.length; c++){
-						newCoords[c].y = (1/newCoords[c].y);
-					}
-				}
+				newCoords = newCoords.map((i) => {
+					var obj = {};
+					obj.x = i.x;
+					obj.y = 1/i.y;
+					return obj;
+				});
 			}
-			else if (this.linearization.length==0){
-				return this.coordinates;
+			if (this.linearization.includes("ln(x)") == true){
+				newCoords = newCoords.map((i) => {
+					var obj = {};
+					obj.x = Math.log(i.x);
+					obj.y = i.y;
+					return obj;
+				});
+			}
+			if (this.linearization.includes("ln(y)") == true){
+				newCoords = newCoords.map((i) => {
+					var obj = {};
+					obj.x = i.x;
+					obj.y = Math.log(i.y);
+					return obj;
+				});
 			}
 			return newCoords;
 		},
