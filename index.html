@@ -15,10 +15,16 @@
 					<th v-html="changeX"></th>
 					<th v-html="changeY"></th>
 				</tr>
-				<tr v-for="(item, index) in detectLinearization">
-					<td v-on:click="edit=true"><div v-show="edit==false">{{+parseFloat(item.x).toFixed(4)}}</div><input v-show="edit" v-bind:value="item.x" v-model.number="item.x" v-on:keyup.esc="edit=false" type="number" v-focus></td>
-					<td v-on:click="edit=true"><div v-show="edit==false">{{+parseFloat(item.y).toFixed(4)}}</div><input v-show="edit"  v-bind:value="item.y" v-model.number="item.y" v-on:keyup.esc="edit=false" type="number"></td>
-					<td v-show="index != 0" class="delete" v-on:click="deleteRow(item)">
+				<tr v-for="(item, index) in coordinates">
+					<td v-on:click="edit=true">
+						<div v-show="edit==false">{{+parseFloat(detectLinearization[index].x).toFixed(4)}}</div>
+						<input v-show="edit" v-model.number="item.x" v-on:keyup.esc="edit=false" type="number" v-focus>
+					</td>
+					<td v-on:click="edit=true">
+						<div v-show="edit==false">{{+parseFloat(detectLinearization[index].y).toFixed(4)}}</div>
+						<input v-show="edit" v-model.number="item.y" v-on:keyup.esc="edit=false" type="number">
+					</td>
+					<td v-show="index != 0" class="delete" v-on:click="deleteRow(item, index)">
 						<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
 							<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
 							<path d="M0 0h24v24H0z" fill="none"></path>
@@ -81,7 +87,8 @@
 		firebase.initializeApp(config);
 	</script> -->
 	<script src="https://d3js.org/d3.v5.min.js"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="https://vuejs.org/js/vue.js"></script>
+	<!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue"></script> -->
 	<script src="editabletable.js"></script>
 	</body>
 </html>

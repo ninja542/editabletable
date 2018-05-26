@@ -16,7 +16,7 @@ var svgSelection = d3.select("#chartcontainer").append("svg").attr("id", "chart"
 		.attr("height", height + margin.top + margin.bottom)
 		.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 // declares Vue App
-new Vue({
+let app = new Vue({
 	el: "#app",
 	data: {
 		// whether the table is being edited or not
@@ -48,23 +48,24 @@ new Vue({
 			dataSelection.attr("r", 3).attr("fill", "black").transition().duration(500).attr("cx", this.xMap).attr("cy", this.yMap);
 			// ENTER: append new circles to new data
 			dataSelection.enter().append("circle").attr("r", 3).attr("fill", "black").attr("cx", this.xMap).attr("cy", this.yMap);
-			// EXIT: delete removed data
-			dataSelection.exit().remove();
 			// update line by calling this function
 			this.updateLineReg(this.lineReg);
 			// update axes
 			svgSelection.select(".x").transition().duration(500).call(d3.axisBottom(this.xScale())).attr("transform", "translate(0, "+ (this.xShift) +")");
 			svgSelection.select(".y").transition().duration(500).call(d3.axisLeft(this.yScale())).attr("transform", "translate("+this.yShift+", 0)");
+			// EXIT: delete removed data
+			dataSelection.exit().remove();
 		},
 		// adds an extra row. Called when "Add Row" button is pressed
 		addRow: function(){
 			this.coordinates.push({x: null, y: null});
+			this.detectLinearization.push({x: null, y: null});
 			// focus();
 		},
 		// similar to addRow
-		deleteRow: function(item){
+		deleteRow: function(item, index){
 			// splicing removes from the index of the item that is going to deleted. 1 means that only one index gets deleted.
-			this.coordinates.splice(this.coordinates.indexOf(item), 1);
+			this.coordinates.splice(index, 1);
 			this.update();
 		},
 		// sets the x axis scale, the conditionals test whether there are negative values
