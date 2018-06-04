@@ -37,7 +37,6 @@
 			<button id="done" v-show="edit" v-on:click="edit = false">Done</button>
 			<button v-on:click="clearAll()">Clear All</button>
 			<h2>Linearization Buttons</h2>
-			<p>Please unlinearize before editing points</p>
 			<input type="checkbox" id="Square x" v-model="linearization" value="Square x"><label for="Square x">Square x</label>
 			<input type="checkbox" id="Square y" v-model="linearization" value="Square y"><label for="Square y">Square y</label>
 			<input type="checkbox" id="1/x" v-model="linearization" value="1/x"><label for="1/x">1/x</label>
@@ -73,19 +72,6 @@
 			</div>
 		</div>
 	</div>
-<!-- 	<script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
-	<script>
-		// Initialize Firebase
-		var config = {
-			apiKey: "AIzaSyAtM-LGOu_kAXh8ym95c80DzbQtfUX7kjo",
-			authDomain: "simulation-account-database.firebaseapp.com",
-			databaseURL: "https://simulation-account-database.firebaseio.com",
-			projectId: "simulation-account-database",
-			storageBucket: "simulation-account-database.appspot.com",
-			messagingSenderId: "226753751963"
-		};
-		firebase.initializeApp(config);
-	</script> -->
 	<script src="https://d3js.org/d3.v5.min.js"></script>
 	<script src="https://vuejs.org/js/vue.js"></script>
 	<!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue"></script> -->

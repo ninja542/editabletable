@@ -10,6 +10,9 @@ td {
 	width: 60px;
 	height: 40px;
 }
+#app {
+	width: 600px;
+}
 #app input {
 	width: 60px;
 }
@@ -57,4 +60,30 @@ h1, h2, h3, p {
 #chartcontainer {
 	overflow: hidden;
 	margin-top: -25px;
+}
+#coordinatelist {
+	padding: 10px;
+}
+#nav {
+	display: flex;
+	justify-content: space-evenly;
+	border-style: solid;
+	border-width: 1px;
+}
+#nav .button {
+	flex-grow: 1;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+#nav .button:hover {
+	cursor: pointer;
+	background-color: #fca27e;
+}
+.active {
+	background-color: #e52325;
+}
+.add {
+	cursor: pointer;
 }

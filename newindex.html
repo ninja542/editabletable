@@ -1,0 +1,42 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="editabletable.css">
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+		<title> Graphing App </title>
+	</head>
+	<body>
+	<div id="body">
+		<div id="app">
+			<div id="nav">
+				<div v-for="item in graphs" :key="item" v-on:click="isActive = item" class="button" :class="{active: isActive == item}" v-bind:style="{color: colormap[item].code, backgroundColor: color}">Graph {{item + 1}}
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="red">
+					    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+					    <path d="M0 0h24v24H0z" fill="none"/>
+					</svg>
+				</div>
+				<div v-on:click="addGraph" class="add">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="green">
+						<path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+						<path d="M0 0h24v24H0z" fill="none"/>
+					</svg>
+				</div>
+			</div>
+			<coordinate-list v-for="(item) in graphs" :colorcode="item" :key="item" v-show="isActive == item"></coordinate-list>
+		</div>
+		<div id="chartcontainer">
+			<div id="xlabel">
+				<input type="text" v-model="xLabel" v-show="edit" v-on:keyup.esc="edit=false" v-on:keyup.enter="edit=false">
+				<div v-show="edit==false" v-on:click="edit=true">{{xLabel}}</div>
+			</div>
+			<div id="ylabel">
+				<input type="text" v-model="yLabel" v-show="edit" v-on:keyup.esc="edit=false" v-on:keyup.enter="edit=false">
+				<div v-show="edit==false" v-on:click="edit=true">{{yLabel}}</div>
+			</div>
+		</div>
+	</div>
+	<script src="https://d3js.org/d3.v5.min.js"></script>
+	<script src="https://vuejs.org/js/vue.js"></script>
+	<!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+	<script src="component.js"></script>
+	</body>
+</html>

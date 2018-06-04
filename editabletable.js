@@ -60,7 +60,6 @@ let app = new Vue({
 		addRow: function(){
 			this.coordinates.push({x: null, y: null});
 			this.detectLinearization.push({x: null, y: null});
-			// focus();
 		},
 		// similar to addRow
 		deleteRow: function(item, index){
@@ -225,7 +224,7 @@ let app = new Vue({
 				obj.y = i.y;
 				return obj;
 			});
-			if (this.linearization.includes("Square x")==true){
+			if (this.linearization.includes("Square x") == true){
 				// change coordinates
 				newCoords = newCoords.map((i) => {
 					var obj = {};
@@ -234,7 +233,7 @@ let app = new Vue({
 					return obj;
 				});
 			}
-			if (this.linearization.includes("Square y")==true){
+			if (this.linearization.includes("Square y") == true){
 				// tests if anything else was manipulated
 				newCoords = newCoords.map((i) => {
 					var obj = {};
@@ -243,7 +242,7 @@ let app = new Vue({
 					return obj;
 				});
 			}
-			if (this.linearization.includes("1/x")==true){
+			if (this.linearization.includes("1/x") == true){
 				// takes reciprocal of x
 				newCoords = newCoords.map((i) => {
 					var obj = {};
@@ -252,7 +251,7 @@ let app = new Vue({
 					return obj;
 				});
 			}
-			if (this.linearization.includes("1/y")==true){
+			if (this.linearization.includes("1/y") == true){
 				newCoords = newCoords.map((i) => {
 					var obj = {};
 					obj.x = i.x;
@@ -300,12 +299,12 @@ let app = new Vue({
 		}
 	},
 	directives: {
-	  focus: {
-	    // directive definition
-	    // when a new element is inserted into the DOM, the browser focus is placed on the element to ease faster data entering
-	    inserted: function (el) {
-	      el.focus();
-	    }
-	  }
+		focus: {
+			// directive definition
+			// when a new element is inserted into the DOM, the browser focus is placed on the element to ease faster data entering
+			inserted: function (el) {
+				el.focus();
+			}
+		}
 	}
 });
