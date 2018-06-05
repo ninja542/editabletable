@@ -10,6 +10,7 @@
 			<h3>Instructions</h3>
 			<p>Click on the Data Table or click the edit button to edit the table.</p>
 			<p>Use Tab to move to the next table cell and Shift+Tab to move to the previous table cell</p>
+			<p>Use Enter button to add new row</p>
 			<table>
 				<tr>
 					<th v-html="changeX"></th>
@@ -18,11 +19,11 @@
 				<tr v-for="(item, index) in coordinates">
 					<td v-on:click="edit=true">
 						<div v-show="edit==false">{{+parseFloat(detectLinearization[index].x).toFixed(4)}}</div>
-						<input v-show="edit" v-model.number="item.x" v-on:keyup.esc="edit=false" type="number" v-focus>
+						<input v-show="edit" v-model.number="item.x" v-on:keyup.esc="edit=false" type="number" v-focus @keyup.enter="addRow">
 					</td>
 					<td v-on:click="edit=true">
 						<div v-show="edit==false">{{+parseFloat(detectLinearization[index].y).toFixed(4)}}</div>
-						<input v-show="edit" v-model.number="item.y" v-on:keyup.esc="edit=false" type="number">
+						<input v-show="edit" v-model.number="item.y" v-on:keyup.esc="edit=false" type="number" @keyup.enter="addRow">
 					</td>
 					<td v-show="index != 0" class="delete" v-on:click="deleteRow(item, index)">
 						<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
