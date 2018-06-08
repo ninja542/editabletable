@@ -1,5 +1,6 @@
 table {
 	border-collapse: collapse;
+	margin-top: 10px;
 }
 th, td {
 	padding: 5px;
@@ -67,22 +68,25 @@ h1, h2, h3, p {
 #nav {
 	display: flex;
 	justify-content: space-evenly;
-	border-style: solid;
+/* 	border-style: solid;
 	border-width: 1px;
-}
-#nav .button {
+ */}
+.button {
 	flex-grow: 1;
 	text-align: center;
+	width: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	border: solid 2px white;
+	font-family: "Open Sans", sans-serif;
 }
 #nav .button:hover {
 	cursor: pointer;
-	background-color: #fca27e;
+	border: solid 2px #fd8e2f;
 }
 .active {
-	background-color: #e52325;
+	border: solid 2px red;
 }
 .add {
 	cursor: pointer;

@@ -154,20 +154,6 @@ let app = new Vue({
 			this.coordinates.forEach((a)=>{a.x=0;a.y=0;});
 		}
 	},
-	mounted: function(){
-		svgSelection.selectAll("circle").data(this.coordinates).enter().append("circle").attr("r", 3).attr("fill", "black").attr("cx", this.xMap).attr("cy", this.yMap);
-		this.xAxis(svgSelection);
-		this.yAxis(svgSelection);
-		scaleX = this.xScale();
-		scaleY = this.yScale();
-		var line = d3.line().x(function(d){return scaleX(d.x);}).y(function(d){return scaleY(d.y);});
-		// draws the line
-		svgSelection.append("path")
-				.attr("d", line(this.lineReg))
-				.attr("stroke-width", 1)
-				.attr("stroke", "black")
-				.attr("class", "line");
-	},
 	computed: {
 		xArray: function(){
 			return this.detectLinearization.map(x => x.x);
@@ -281,6 +267,20 @@ let app = new Vue({
 			}
 			return y;
 		}
+	},
+	mounted: function(){
+		svgSelection.selectAll("circle").data(this.coordinates).enter().append("circle").attr("r", 3).attr("fill", "black").attr("cx", this.xMap).attr("cy", this.yMap);
+		this.xAxis(svgSelection);
+		this.yAxis(svgSelection);
+		scaleX = this.xScale();
+		scaleY = this.yScale();
+		var line = d3.line().x(function(d){return scaleX(d.x);}).y(function(d){return scaleY(d.y);});
+		// draws the line
+		svgSelection.append("path")
+				.attr("d", line(this.lineReg))
+				.attr("stroke-width", 1)
+				.attr("stroke", "black")
+				.attr("class", "line");
 	},
 	watch: {
 		coordinates: {
