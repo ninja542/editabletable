@@ -406,6 +406,25 @@ Vue.component('coordinate-list', {
 		<p> <span v-html="changeY"></span> = {{+parseFloat(lineRegEq[0]).toFixed(4)}}<span v-html="changeX"></span> + {{+parseFloat(lineRegEq[1]).toFixed(4)}}</p>
 		<p> r = {{+parseFloat(lineRegEq[6]).toFixed(4)}}</p>
 		<p> r<sup>2</sup> = {{+parseFloat(lineRegEq[7]).toFixed(4)}}</p>
+		<div>
+			<h3> Mode </h3>
+			<input type="radio" name="mode" id="Physics" v-model="mode" value="Physics" checked><label for="Physics">Physics Mode</label>
+			<input type="radio" name="mode" id="Stats" v-model="mode" value="Stats"><label for="Stats">Statistics Mode</label>
+			<h3>Equation</h3>
+			<p> <span v-html="changeY"></span> = {{+parseFloat(lineRegEq[0]).toFixed(4)}}<span v-html="changeX"></span> + {{+parseFloat(lineRegEq[1]).toFixed(4)}}</p>
+			<p> r = {{+parseFloat(lineRegEq[6]).toFixed(4)}}</p>
+			<p> r<sup>2</sup> = {{+parseFloat(lineRegEq[7]).toFixed(4)}}</p>
+			<div v-if="mode == 'Stats'">
+				<h3> Statistic Info </h3>
+				<p> If Sample is selected, Standard Deviation will be adjusted <br> using Bessel's correction </p>
+				<input type="radio" name="sample" id="Population" v-model="sdMode"  value="Population" checked><label for="Population">Entire Population</label>
+				<input type="radio" name="sample" id="Sample" v-model="sdMode" value="Sample"><label for="Sample">Sample</label>
+				<p> Standard Deviation of X: {{+parseFloat(lineRegEq[5]).toFixed(4)}} </p>
+				<p> Standard Deviation of Y: {{+parseFloat(lineRegEq[4]).toFixed(4)}} </p>
+				<p> Mean of X = {{+parseFloat(lineRegEq[3]).toFixed(4)}}</p>
+				<p> Mean of Y = {{+parseFloat(lineRegEq[2]).toFixed(4)}}</p>
+			</div>
+		</div>
 	</div>
 	`,
 	mounted: function(){
