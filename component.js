@@ -11,6 +11,7 @@ let colormap = [
 	{color: "pink", code: "#F92672"},
 	{color: "green", code: "#A6E22E"}
 ];
+let radius = 4;
 // defines margin lengths
 const margin = {top:5, right:20, bottom:60, left:85};
 var height = 630 - margin.top - margin.bottom,
@@ -64,6 +65,15 @@ const store = new Vuex.Store({
 				{x: randomnumber(), y: randomnumber()},
 				{x: randomnumber(), y: randomnumber()}
 			);
+		},
+		clearGraph(state, info){
+			state.coordinates[info].forEach((a)=>{a.x = 0; a.y = 0;});
+		},
+		copyGraph(state, info){
+			store.commit('removeGraph', info.graph);
+			for(let i in state.coordinates[info.copy]){
+				state.coordinates[info.graph].push(state.coordinates[info.copy][i]);
+			}
 		}
 	},
 	getters: {
@@ -222,13 +232,18 @@ Vue.component('coordinate-list', {
 		addRow: function(){
 			store.commit('addRow', this.colorcode);
 		},
+		clearAll: function(){
+			store.commit('clearGraph', this.colorcode);
+		},
 		update: function(){
 			// JOIN: select chart and bind data to circles
 			let dataSelection = d3.select("#transform").selectAll("."+colormap[this.colorcode].color+".dot").data(this.detectLinearization);
 			// UPDATE: old elements
-			dataSelection.attr("r", 3).transition().duration(500).attr("cx", axes.xMap).attr("cy", axes.yMap);
+			dataSelection.attr("r", 4).transition().duration(500).attr("cx", axes.xMap).attr("cy", axes.yMap).select("title").text(function(d){return "x: "+d.x+", y: "+d.y;});
 			// ENTER: append new circles to new data
-			dataSelection.enter().append("circle").attr("r", 3).attr("fill", colormap[this.colorcode].code).attr("cx", axes.xMap).attr("cy", axes.yMap).attr("class", colormap[this.colorcode].color+" dot");
+			dataSelection.enter().append("circle").attr("r", radius).attr("fill", colormap[this.colorcode].code).attr("cx", axes.xMap).attr("cy", axes.yMap).attr("class", colormap[this.colorcode].color+" dot")
+				.append("svg:title")
+					.text(function(d){return "x: "+d.x+", y: "+d.y;});
 			dataSelection.exit().remove();
 			// update line by calling this function
 			this.updateLineReg(this.lineReg);
@@ -440,6 +455,7 @@ Vue.component('coordinate-list', {
 		<button v-show="edit" v-on:click="addRow"> Add row </button>
 		<button v-show="edit==false" v-on:click="edit = true">Edit</button>
 		<button id="done" v-show="edit" v-on:click="edit = false">Done</button>
+		<button v-on:click="clearAll()">Clear All</button>
 		<h3>Linearization Buttons</h3>
 		<input type="checkbox" :id="'squarex'+this.colorcode" v-model="linearization" value="Square x"><label :for="'squarex'+this.colorcode">Square x</label>
 		<input type="checkbox" :id="'squarey'+this.colorcode" v-model="linearization" value="Square y"><label :for="'squarey'+this.colorcode">Square y</label>
@@ -471,7 +487,9 @@ Vue.component('coordinate-list', {
 	</div>
 	`,
 	mounted: function(){
-		d3.select("#transform").selectAll("."+colormap[this.colorcode].color+".dot").data(this.detectLinearization).enter().append("circle").attr("r", 3).attr("fill", colormap[this.colorcode].code).attr("cx", axes.xMap).attr("cy", axes.yMap).attr("class", colormap[this.colorcode].color+" dot");
+		d3.select("#transform").selectAll("."+colormap[this.colorcode].color+".dot").data(this.detectLinearization).enter().append("circle").attr("r", radius).attr("fill", colormap[this.colorcode].code).attr("cx", axes.xMap).attr("cy", axes.yMap).attr("class", colormap[this.colorcode].color+" dot")
+			.append("svg:title")
+				.text(function(d){return "x: "+d.x+", y: "+d.y;});
 		scaleX = store.getters.xScale;
 		scaleY = store.getters.yScale;
 		var line = d3.line().x(function(d){return scaleX(d.x);}).y(function(d){return scaleY(d.y);});
@@ -514,6 +532,9 @@ let app = new Vue({
 			store.commit("removeGraph", index);
 			d3.selectAll("."+colormap[item].color).remove();
 		},
+		copyGraph: function(item){
+			store.commit("copyGraph", {graph: this.isActive, copy: item});
+		}
 	},
 	computed: {
 		color: function(){

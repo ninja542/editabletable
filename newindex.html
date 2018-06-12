@@ -22,6 +22,7 @@
 				</div>
 			</div>
 			<div id="placeholder"></div>
+			<button v-for="item in graphs" v-if="item != isActive" @click="copyGraph(item)">Copy Graph {{item + 1}}</button>
 			<coordinate-list v-for="(item) in graphs" :colorcode="item" :key="item" v-show="isActive == item" v-on:update-axis="axes.addXArray(item, this.xArray)"></coordinate-list>
 		</div>
 		<div id="chartcontainer">
