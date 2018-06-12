@@ -7,10 +7,9 @@
 	<body>
 	<div id="body">
 		<div id="app">
-			<div id="placeholder"></div>
 			<div id="nav">
 				<div v-for="(item, index) in graphs" :key="item" v-on:click="isActive = item" class="button" :class="{active: isActive == item}" v-bind:style="{color: colormap[item].code}">Graph {{item + 1}}
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="red" @click="deleteGraph(item, index)">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="red" @click="deleteGraph(item, index), isActive = 0">
 							<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
 							<path d="M0 0h24v24H0z" fill="none"/>
 					</svg>
@@ -22,7 +21,8 @@
 					</svg>
 				</div>
 			</div>
-			<coordinate-list v-for="(item) in graphs" :colorcode="item" :key="item" v-show="isActive == item" v-on:update-axis="updateAxis()"></coordinate-list>
+			<div id="placeholder"></div>
+			<coordinate-list v-for="(item) in graphs" :colorcode="item" :key="item" v-show="isActive == item" v-on:update-axis="axes.addXArray(item, this.xArray)"></coordinate-list>
 		</div>
 		<div id="chartcontainer">
 			<div id="xlabel">
@@ -37,6 +37,7 @@
 	</div>
 	<script src="https://d3js.org/d3.v5.min.js"></script>
 	<script src="https://vuejs.org/js/vue.js"></script>
+	<script src="https://unpkg.com/vuex"></script>
 	<script src="component.js"></script>
 	</body>
 </html>

@@ -21,136 +21,178 @@ d3.select("#chartcontainer").append("svg").attr("id", "chart")
 		.attr("height", height + margin.top + margin.bottom)
 		.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 		.attr("id", "transform");
+const store = new Vuex.Store({
+	state: {
+		xShift: 0,
+		yShift: 0,
+		coordinates: [
+			[
+				{x: randomnumber(), y: randomnumber()},
+				{x: randomnumber(), y: randomnumber()},
+				{x: randomnumber(), y: randomnumber()},
+				{x: randomnumber(), y: randomnumber()},
+				{x: randomnumber(), y: randomnumber()},
+			],
+			[
+				{x: randomnumber(), y: randomnumber()},
+				{x: randomnumber(), y: randomnumber()},
+				{x: randomnumber(), y: randomnumber()},
+				{x: randomnumber(), y: randomnumber()},
+				{x: randomnumber(), y: randomnumber()},
+			],
+			[],
+			[],
+			[],
+			[]
+		]
+	},
+	mutations: {
+		addRow (state, index){
+			state.coordinates[index].push({x: null, y: null});
+		},
+		deleteRow (state, info){
+			state.coordinates[info.item].splice(info.index, 1);
+		},
+		removeGraph (state, info){
+			state.coordinates[info].splice(0, state.coordinates[info].length);
+		},
+		addGraph (state, info){
+			state.coordinates[info].push(
+				{x: randomnumber(), y: randomnumber()},
+				{x: randomnumber(), y: randomnumber()},
+				{x: randomnumber(), y: randomnumber()},
+				{x: randomnumber(), y: randomnumber()},
+				{x: randomnumber(), y: randomnumber()}
+			);
+		}
+	},
+	getters: {
+		xArray: state => {
+			array = [];
+			for(let i = 0; i < state.coordinates.length; i++){
+				for(let j = 0; j < state.coordinates[i].length; j++){
+					array.push(state.coordinates[i][j].x);
+				}
+			}
+			return array;
+		},
+		yArray: state => {
+			array = [];
+			for(let i = 0; i < state.coordinates.length; i++){
+				for(let j = 0; j < state.coordinates[i].length; j++){
+					array.push(state.coordinates[i][j].y);
+				}
+			}
+			return array;
+		},
+		minX: (state, getters) => {
+			return d3.min(getters.xArray);
+		},
+		maxX: (state, getters) => {
+			return d3.max(getters.xArray);
+		},
+		minY: (state, getters) => {
+			return d3.min(getters.yArray);
+		},
+		maxY: (state, getters) => {
+			return d3.max(getters.yArray);
+		},
+		xScale: (state, getters) => {
+			var xMap;
+			if(getters.minX<0){
+				if(getters.maxX<0){
+					xMap = d3.scaleLinear().domain([getters.minX, 0]).range([0, width]).nice();
+					state.yShift = xMap(0);
+					return xMap;
+				}
+				else {
+					xMap = d3.scaleLinear().domain([getters.minX, getters.maxX]).range([0, width]).nice();
+					state.yShift = xMap(0);
+					return xMap;
+				}
+			}
+			else{
+				state.yShift = 0;
+				return d3.scaleLinear().domain([0, getters.maxX]).range([0, width]).nice();
+			}
+		},
+		yScale: (state, getters) => {
+			var yMap;
+			if(getters.minY<0){
+				if(getters.maxY<0){
+					yMap = d3.scaleLinear().domain([0, getters.minY]).range([0, height]).nice();
+					state.xShift = yMap(0);
+					return yMap;
+				}
+				else{
+					yMap = d3.scaleLinear().domain([getters.maxY, getters.minY]).range([0, height]).nice();
+					state.xShift = yMap(0);
+					return yMap;
+				}
+			}
+			else{
+				state.xShift = height;
+				return d3.scaleLinear().domain([getters.maxY, 0]).range([0, height]).nice();
+			}
+		}
+	}
+});
 let axes = new Vue({
 	el: "#placeholder",
 	data: {
-		minX: 0,
-		maxX: 100,
-		minY: 0,
-		maxY: 100,
 		yShift: 0,
 		xShift: 0,
-		xArray: [
-			[0],
-			[1],
-			[2],
-			[3],
-			[4],
-			[5],
-		]
 	},
 	methods: {
 		updateAxis: function(){
 			// update axes
-			d3.select(".x").transition().duration(500).call(d3.axisBottom(this.xScale())).attr("transform", "translate(0, "+ (this.xShift) +")");
-			d3.select(".y").transition().duration(500).call(d3.axisLeft(this.yScale())).attr("transform", "translate("+this.yShift+", 0)");
-			// EXIT: delete removed data
-			// dataSelection.exit().remove();
+			d3.select(".x").transition().duration(500).call(d3.axisBottom(store.getters.xScale)).attr("transform", "translate(0, "+ (store.state.xShift) +")");
+			d3.select(".y").transition().duration(500).call(d3.axisLeft(store.getters.yScale)).attr("transform", "translate("+store.state.yShift+", 0)");
 		},
-		xScale: function(){
-			var xMap;
-			// if there is a negative value
-			if(this.minX<0){
-				// if all values of x are negative
-				if(this.maxX<0){
-					// maps domain of the smallest number to 0 to the range of the graph width
-					xMap = d3.scaleLinear().domain([this.minX, 0]).range([0, width]).nice(); // nice means that the numbers are nice
-					// the y axis is shifted to the left where 0 is. xMap is a function that takes the value 0 and turns it into a pixel value relative to the svg coordinate space, where (0,0) is in the top left corner
-					this.yShift = xMap(0);
-					return xMap;
-				}
-				// if there are both positive and negative x values
-				else {
-					// similar to above, d3.extent is just the array from the minimum to maximum x value
-					xMap = d3.scaleLinear().domain([this.minX, this.maxX]).range([0, width]).nice();
-					// yShift is still needed, as we have negative x values
-					this.yShift = xMap(0);
-					return xMap;
-				}
-			}
-			// all x values are positive
-			else{
-				this.yShift = 0;
-				return d3.scaleLinear().domain([0, this.maxX]).range([0, width]).nice();
-			}
-		},
-		// this forms the xAxis
 		xAxis: function(container){
-			var xAxis = d3.axisBottom(this.xScale());
+			var xAxis = d3.axisBottom(store.getters.xScale);
 			container.append("g")
-				// translates the x axis calculated from yScale up and down
-				.attr("transform", "translate(0,"+(this.xShift)+")")
+				.attr("transform", "translate(0,"+(store.state.xShift)+")")
 				.attr("class", "x axis")
 				.call(xAxis);
 		},
-		// function to convert values, calls xScale to use the correct scale at all times
 		xMap: function(d){
-			scale = this.xScale();
+			scale = store.getters.xScale;
 			return scale(d.x);
 		},
-		yScale: function(){
-			var yMap;
-			// if(this.detectLinearization.length == 1 && this.minY == 0){
-			// 	this.xShift = height;
-			// 	return d3.scaleLinear().domain([1, 0]).range([0, height]).nice();
-			// }
-			if(this.minY<0){
-				if(this.maxY<0){
-					yMap = d3.scaleLinear().domain([0, this.minY]).range([0, height]).nice();
-					this.xShift = yMap(0);
-					return yMap;
-				}
-				else{
-					yMap = d3.scaleLinear().domain([this.maxY, this.minY]).range([0, height]).nice();
-					this.xShift = yMap(0);
-					return yMap;
-				}
-			}
-			else{
-				this.xShift = height;
-				return d3.scaleLinear().domain([this.maxY, 0]).range([0, height]).nice();
-			}
-		},
 		yAxis: function(container){
-			var yAxis = d3.axisLeft(this.yScale());
+			var yAxis = d3.axisLeft(store.getters.yScale);
 			container.append("g").call(yAxis)
-				.attr("transform", "translate("+this.yShift+", 0)")
+				.attr("transform", "translate("+store.state.yShift+", 0)")
 				.attr("class", "y axis");
 		},
 		yMap: function(d){
-			scale = this.yScale();
+			scale = store.getters.yScale;
 			return scale(d.y);
+		}
+	},
+	computed: {
+		xScale: function(){
+			return store.getters.xScale;
 		},
-		updateMinMax: function(array){
-			console.log(array);
-		},
-		addXArray: function(array){
-
+		yScale: function(){
+			return store.getters.yScale;
 		}
 	},
 	mounted: function(){
-		scaleX = this.xScale();
-		scaleY = this.yScale();
+		scaleX = store.getters.xScale;
+		scaleY = store.getters.yScale;
 		this.xAxis(d3.select("#transform"));
 		this.yAxis(d3.select("#transform"));
-		// d3.select("#transform").append("path").attr("stroke-width", 1).attr("stroke", "black");
 	},
 	watch: {
-		minX: function(){
+		xScale: function(){
 			this.updateAxis();
 		},
-		maxX: function(){
+		yScale: function(){
 			this.updateAxis();
-		},
-		minY: function(){
-			this.updateAxis();
-			this.updateAxis();
-		},
-		maxY: function(){
-			this.updateAxis();
-			this.updateAxis();
-		},
-	},
+		}
+	}
 });
 
 new Vue({
@@ -166,24 +208,6 @@ Vue.component('coordinate-list', {
 	props: ["colorcode"],
 	data: function(){
 		return {
-			/*coordinates: [
-				{x: 43, y: 99},
-				{x: 21, y: 65},
-				{x: 25, y: 79},
-				{x: 42, y: 75},
-				{x: 57, y: 87},
-				{x: 59, y: 81}
-			],*/
-			coordinates: [
-				{x: 100, y: 100},
-				{x: randomnumber(), y: randomnumber()},
-				{x: randomnumber(), y: randomnumber()},
-				{x: randomnumber(), y: randomnumber()},
-				{x: randomnumber(), y: randomnumber()},
-				{x: randomnumber(), y: randomnumber()},
-				{x: randomnumber(), y: randomnumber()},
-				{x: randomnumber(), y: randomnumber()},
-			],
 			edit: false,
 			linearization: [],
 			visibility: true,
@@ -193,14 +217,10 @@ Vue.component('coordinate-list', {
 	},
 	methods: {
 		deleteRow: function(item, index){
-			if(index > 1){
-				this.coordinates.splice(index, 1);
-				// this.$emit("update-axis");
-			}
+			store.commit('deleteRow', {index: index, item: this.colorcode});
 		},
 		addRow: function(){
-			this.coordinates.push({x: null, y: null});
-			this.detectLinearization.push({x: null, y: null});
+			store.commit('addRow', this.colorcode);
 		},
 		update: function(){
 			// JOIN: select chart and bind data to circles
@@ -208,10 +228,17 @@ Vue.component('coordinate-list', {
 			// UPDATE: old elements
 			dataSelection.attr("r", 3).transition().duration(500).attr("cx", axes.xMap).attr("cy", axes.yMap);
 			// ENTER: append new circles to new data
-			dataSelection.enter().append("circle").attr("r", 3).attr("fill", colormap[this.colorcode].color).attr("cx", axes.xMap).attr("cy", axes.yMap).attr("class", colormap[this.colorcode].color+" dot");
+			dataSelection.enter().append("circle").attr("r", 3).attr("fill", colormap[this.colorcode].code).attr("cx", axes.xMap).attr("cy", axes.yMap).attr("class", colormap[this.colorcode].color+" dot");
 			dataSelection.exit().remove();
 			// update line by calling this function
-			// this.updateLineReg(this.lineReg);
+			this.updateLineReg(this.lineReg);
+		},
+		updateLineReg: function(lineData){
+			scaleX = store.getters.xScale;
+			scaleY = store.getters.yScale;
+			var line = d3.line().x(function(d){return scaleX(d.x);}).y(function(d){return scaleY(d.y);});
+			d3.select("#transform").transition().duration(500).select("."+colormap[this.colorcode].color+".line")
+				.attr("d", line(lineData));
 		},
 		visibleupdate: function(){
 			if(this.visibility == false){
@@ -223,11 +250,8 @@ Vue.component('coordinate-list', {
 		}
 	},
 	computed: {
-		xArray: function(){
-			return this.detectLinearization.map(item => item.x);
-		},
-		yArray: function(){
-			return this.detectLinearization.map(item => item.y);
+		coordinates: function(){
+			return store.state.coordinates[this.colorcode];
 		},
 		detectLinearization: function(){
 			// IMPORTANT: Maybe add a new coordinate system, so you can return back
@@ -327,6 +351,21 @@ Vue.component('coordinate-list', {
 				.reduce((a,b,i) => a + b * yArray.map(function(y){return (y - yMean)/Math.sqrt(yArray.map(function(y){return Math.pow(y - yMean, 2);}).reduce((a,b) => a + b) / yArray.length);})[i], 0) / xArray.length;
 			return [a, b, yMean, xMean, sdY, sdX, r, Math.pow(r, 2)];
 		},
+		lineReg: function(){
+			a = this.lineRegEq[0];
+			b = this.lineRegEq[1];
+			x1 = store.getters.xScale.domain()[0];
+			y1 = a*x1 + b;
+			x2 = store.getters.xScale.domain()[1];
+			y2 = a*x2 + b;
+			return [{x: x1, y: y1}, {x: x2, y: y2}];
+		},
+		xScale: function(){
+			return store.getters.xScale;
+		},
+		yScale: function(){
+			return store.getters.yScale;
+		}
 	},
 	directives: {
 		focus: {
@@ -343,8 +382,6 @@ Vue.component('coordinate-list', {
 			handler: function(val){
 				//insert d3 chart update
 				this.update();
-				// this.$emit("update-minmax", this.detectLinearization);
-				// this.$emit("update-axis");
 			}
 		},
 		visibility: function(){
@@ -356,6 +393,12 @@ Vue.component('coordinate-list', {
 				//insert d3 chart update
 				this.update();
 			}
+		},
+		xScale: function(){
+			this.update();
+		},
+		yScale: function(){
+			this.update();
 		}
 	},
 	template: `
@@ -408,8 +451,8 @@ Vue.component('coordinate-list', {
 		<p> r<sup>2</sup> = {{+parseFloat(lineRegEq[7]).toFixed(4)}}</p>
 		<div>
 			<h3> Mode </h3>
-			<input type="radio" name="mode" id="Physics" v-model="mode" value="Physics" checked><label for="Physics">Physics Mode</label>
-			<input type="radio" name="mode" id="Stats" v-model="mode" value="Stats"><label for="Stats">Statistics Mode</label>
+			<input type="radio" name="mode" :id="'Physics'+this.colorcode" v-model="mode" value="Physics" checked><label :for="'Physics'+this.colorcode">Physics Mode</label>
+			<input type="radio" name="mode" :id="'Stats'+this.colorcode" v-model="mode" value="Stats"><label :for="'Stats'+this.colorcode">Statistics Mode</label>
 			<h3>Equation</h3>
 			<p> <span v-html="changeY"></span> = {{+parseFloat(lineRegEq[0]).toFixed(4)}}<span v-html="changeX"></span> + {{+parseFloat(lineRegEq[1]).toFixed(4)}}</p>
 			<p> r = {{+parseFloat(lineRegEq[6]).toFixed(4)}}</p>
@@ -417,8 +460,8 @@ Vue.component('coordinate-list', {
 			<div v-if="mode == 'Stats'">
 				<h3> Statistic Info </h3>
 				<p> If Sample is selected, Standard Deviation will be adjusted <br> using Bessel's correction </p>
-				<input type="radio" name="sample" id="Population" v-model="sdMode"  value="Population" checked><label for="Population">Entire Population</label>
-				<input type="radio" name="sample" id="Sample" v-model="sdMode" value="Sample"><label for="Sample">Sample</label>
+				<input type="radio" name="sample" :id="'Population'+this.colorcode" v-model="sdMode"  value="Population" checked><label :for="'Population'+this.colorcode">Entire Population</label>
+				<input type="radio" name="sample" :id="'Sample'+this.colorcode" v-model="sdMode" value="Sample"><label :for="'Sample'+this.colorcode">Sample</label>
 				<p> Standard Deviation of X: {{+parseFloat(lineRegEq[5]).toFixed(4)}} </p>
 				<p> Standard Deviation of Y: {{+parseFloat(lineRegEq[4]).toFixed(4)}} </p>
 				<p> Mean of X = {{+parseFloat(lineRegEq[3]).toFixed(4)}}</p>
@@ -429,6 +472,14 @@ Vue.component('coordinate-list', {
 	`,
 	mounted: function(){
 		d3.select("#transform").selectAll("."+colormap[this.colorcode].color+".dot").data(this.detectLinearization).enter().append("circle").attr("r", 3).attr("fill", colormap[this.colorcode].code).attr("cx", axes.xMap).attr("cy", axes.yMap).attr("class", colormap[this.colorcode].color+" dot");
+		scaleX = store.getters.xScale;
+		scaleY = store.getters.yScale;
+		var line = d3.line().x(function(d){return scaleX(d.x);}).y(function(d){return scaleY(d.y);});
+		d3.select("#transform").append("path")
+				.attr("d", line(this.lineReg))
+				.attr("stroke-width", 1)
+				.attr("stroke", colormap[this.colorcode].code)
+				.attr("class", colormap[this.colorcode].color+" line");
 	}
 });
 
@@ -454,19 +505,14 @@ let app = new Vue({
 					i++;
 				}
 				this.graphs.splice(i, 0, i);
+				store.commit("addGraph", i);
 				// this.graphs.push(this.graphs.length);
 			}
 		},
 		deleteGraph: function(item, index){
-			if (index == this.graphs.length - 1){
-				this.graphs.splice(index, 1);
-			}
-			else {
-				this.graphs.splice(index, 1);
-				// this.graphs = this.graphs.map((item, index)=> index);
-			}
-			// this.isActive = index - 2;
-			d3.selectAll("."+colormap[item].color+".dot").remove();
+			this.graphs.splice(index, 1);
+			store.commit("removeGraph", index);
+			d3.selectAll("."+colormap[item].color).remove();
 		},
 	},
 	computed: {
