@@ -71,8 +71,10 @@ const store = new Vuex.Store({
 		},
 		copyGraph(state, info){
 			store.commit('removeGraph', info.graph);
-			for(let i in state.coordinates[info.copy]){
-				state.coordinates[info.graph].push(state.coordinates[info.copy][i]);
+			for(let i = 0; i < state.coordinates[info.copy].length; i++){
+				x = state.coordinates[info.copy][i].x;
+				y = state.coordinates[info.copy][i].y;
+				state.coordinates[info.graph].push({x: x, y: y});
 			}
 		}
 	},
