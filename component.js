@@ -45,6 +45,14 @@ const store = new Vuex.Store({
 			[],
 			[],
 			[]
+		],
+		lincoords: [
+			[],
+			[],
+			[],
+			[],
+			[],
+			[]
 		]
 	},
 	mutations: {
@@ -72,27 +80,37 @@ const store = new Vuex.Store({
 		copyGraph(state, info){
 			store.commit('removeGraph', info.graph);
 			for(let i = 0; i < state.coordinates[info.copy].length; i++){
-				x = state.coordinates[info.copy][i].x;
-				y = state.coordinates[info.copy][i].y;
+				let x = state.coordinates[info.copy][i].x;
+				let y = state.coordinates[info.copy][i].y;
 				state.coordinates[info.graph].push({x: x, y: y});
+			}
+		},
+		changelinearcoords(state, info){
+			state.lincoords[info.index].splice(0, state.lincoords[info.index].length);
+			for(let i = 0; i < info.graph.length; i++){
+				let x = info.graph[i].x;
+				let y = info.graph[i].y;
+				state.lincoords[info.index].push(
+					{x: x, y: y}
+				);
 			}
 		}
 	},
 	getters: {
 		xArray: state => {
 			array = [];
-			for(let i = 0; i < state.coordinates.length; i++){
-				for(let j = 0; j < state.coordinates[i].length; j++){
-					array.push(state.coordinates[i][j].x);
+			for(let i = 0; i < state.lincoords.length; i++){
+				for(let j = 0; j < state.lincoords[i].length; j++){
+					array.push(state.lincoords[i][j].x);
 				}
 			}
 			return array;
 		},
 		yArray: state => {
 			array = [];
-			for(let i = 0; i < state.coordinates.length; i++){
-				for(let j = 0; j < state.coordinates[i].length; j++){
-					array.push(state.coordinates[i][j].y);
+			for(let i = 0; i < state.lincoords.length; i++){
+				for(let j = 0; j < state.lincoords[i].length; j++){
+					array.push(state.lincoords[i][j].y);
 				}
 			}
 			return array;
@@ -407,6 +425,7 @@ Vue.component('coordinate-list', {
 		detectLinearization: {
 			deep: true,
 			handler: function(val){
+				store.commit('changelinearcoords', {graph: this.detectLinearization, index: this.colorcode});
 				//insert d3 chart update
 				this.update();
 			}
@@ -418,8 +437,7 @@ Vue.component('coordinate-list', {
 			this.update();
 		}
 	},
-	template: `
-	<div id="coordinatelist">
+	template: `<div id="coordinatelist">
 		<div @click="visibility = false" v-show="visibility == true" class="add">
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 					<path d="M0 0h24v24H0z" fill="none"/>
@@ -486,9 +504,9 @@ Vue.component('coordinate-list', {
 				<p> Mean of Y = {{+parseFloat(lineRegEq[2]).toFixed(4)}}</p>
 			</div>
 		</div>
-	</div>
-	`,
+	</div>`,
 	mounted: function(){
+		store.commit('changelinearcoords', {graph: this.detectLinearization, index: this.colorcode});
 		d3.select("#transform").selectAll("."+colormap[this.colorcode].color+".dot").data(this.detectLinearization).enter().append("circle").attr("r", radius).attr("fill", colormap[this.colorcode].code).attr("cx", axes.xMap).attr("cy", axes.yMap).attr("class", colormap[this.colorcode].color+" dot")
 			.append("svg:title")
 				.text(function(d){return "x: "+d.x+", y: "+d.y;});
@@ -503,7 +521,7 @@ Vue.component('coordinate-list', {
 	}
 });
 
-let app = new Vue({
+new Vue({
 	el: '#app',
 	data: {
 		graphs: [0, 1],
