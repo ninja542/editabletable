@@ -3,7 +3,8 @@ new Vue({
 	data: {
 		edit: false,
 		xLabel: "x axis (units)",
-		yLabel: "y axis (units)"
+		yLabel: "y axis (units)",
+		title: "Title of Graph"
 	}
 });
 // defines margin lengths

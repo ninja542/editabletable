@@ -35,12 +35,12 @@ button {
 h1, h2, h3, p {
 	font-family: "Open Sans", sans-serif;
 }
-#xlabel input, #ylabel input {
+#xlabel input, #ylabel input, #title input{
 	width: 200px;
 	text-align: center;
 	font-family: "Open Sans", sans-serif;
 }
-#xlabel div, #ylabel div {
+#xlabel div, #ylabel div, #title div {
 	width: 200px;
 	text-align: center;
 	font-family: "Open Sans", sans-serif;
@@ -57,6 +57,12 @@ h1, h2, h3, p {
 	position: relative;
 	right: 80px;
 	top: 250px;
+}
+#title {
+	position: relative;
+	width: 200px;
+	margin: auto;
+	top: 30px;
 }
 #chartcontainer {
 	overflow: hidden;

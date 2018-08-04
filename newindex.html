@@ -26,6 +26,10 @@
 			<coordinate-list v-for="(item) in graphs" :colorcode="item" :key="item" v-show="isActive == item" v-on:update-axis="axes.addXArray(item, this.xArray)"></coordinate-list>
 		</div>
 		<div id="chartcontainer">
+			<div id="title">
+				<input type="text" v-model="title" v-show="edit" v-on:keyup.esc="edit=false" v-on:keyup.enter="edit=false">
+				<div v-show="edit==false" v-on:click="edit=true">{{title}}</div>
+			</div>
 			<div id="xlabel">
 				<input type="text" v-model="xLabel" v-show="edit" v-on:keyup.esc="edit=false" v-on:keyup.enter="edit=false">
 				<div v-show="edit==false" v-on:click="edit=true">{{xLabel}}</div>
